@@ -6,14 +6,14 @@ import { LanguageProvider } from "@/components/LanguageContext";
 
 export const metadata: Metadata = {
   title: "Tiko Site",
-  description: "Personal portfolio website dengan retro Stardew Valley aesthetic",
+  description: "Personal Website Tiko Aprilianto",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>): any {
   return (
     <html lang="id">
       <body className="antialiased min-h-screen flex flex-col">
