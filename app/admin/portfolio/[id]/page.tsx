@@ -14,6 +14,7 @@ interface Category {
 }
 
 // Admin pages use dynamic routing and don't need static generation
+// generateStaticParams moved to layout for static export compatibility
 
 export default function EditPortfolioPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()

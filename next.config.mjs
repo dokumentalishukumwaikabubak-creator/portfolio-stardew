@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // Removed 'output: export' to support dynamic admin routes
   trailingSlash: true,
   images: {
     unoptimized: true,
