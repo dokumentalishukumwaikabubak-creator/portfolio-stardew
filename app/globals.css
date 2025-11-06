@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Lato:wght@400;700&family=Inter:wght@400;600;700&family=Courier+Prime&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-neutral-700;
+    background-color: theme('colors.background.page');
+    font-family: theme('fontFamily.body');
+  }
+  
+  h1, h2, h3 {
+    @apply text-primary-900;
+    font-family: theme('fontFamily.heading');
+  }
+  
+  h4, h5, h6 {
+    @apply text-primary-900;
+    font-family: theme('fontFamily.subheading');
+  }
+}
+
+@layer components {
+  /* Pixel border utility */
+  .pixel-border {
+    border: 3px solid theme('colors.primary.700');
+    box-shadow: 4px 4px 0px rgba(43, 40, 36, 0.2);
+  }
+  
+  .pixel-border-secondary {
+    border: 3px solid theme('colors.secondary.500');
+    box-shadow: 4px 4px 0px rgba(123, 168, 69, 0.2);
+  }
+  
+  /* Retro button */
+  .btn-retro {
+    font-family: theme('fontFamily.subheading');
+    @apply text-lg px-6 py-3 pixel-border bg-accent-500 text-white
+           hover:bg-accent-700 transition-all active:translate-x-1 active:translate-y-1 active:shadow-none;
+    transition-duration: theme('transitionDuration.fast');
+  }
+  
+  /* Card styles */
+  .card-vintage {
+    background-color: theme('colors.background.surface');
+    @apply p-8 pixel-border;
+  }
+  
+  /* Input styles */
+  .input-retro {
+    @apply w-full px-4 py-2 border-neutral-300 focus:border-accent-500 focus:outline-none transition-colors;
+    font-family: theme('fontFamily.body');
+    border-width: theme('borderWidth.medium');
+    background-color: theme('colors.background.elevated');
+  }
+  
+  /* Page header */
+  .page-header {
+    @apply text-4xl md:text-5xl text-center mb-12 text-primary-900;
+    font-family: theme('fontFamily.heading');
+  }
+}
+
+@layer utilities {
+  /* Text shadow for pixel effect */
+  .text-pixel-shadow {
+    text-shadow: 2px 2px 0px rgba(43, 40, 36, 0.3);
+  }
+  
+  /* Animated underline */
+  .animate-underline {
+    position: relative;
+  }
+  
+  .animate-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: theme('colors.accent.500');
+    transition: width 0.3s ease;
+  }
+  
+  .animate-underline:hover::after {
+    width: 100%;
+  }
+}
