@@ -6,11 +6,33 @@ import { supabase } from '@/lib/supabase'
 import { ArrowLeft, ExternalLink, Github, Calendar } from 'lucide-react'
 import type { PortfolioItemWithCategory } from '@/types/database.types'
 
+// Generate static params untuk semua portfolio items
+async function getAllPortfolioIds(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('portfolio_items')
+    .select('id')
+    .order('created_at', { ascending: false })
+
+  if (error || !data) {
+    return []
+  }
+
+  return data.map(item => item.id.toString())
+}
+
+export async function generateStaticParams() {
+  const ids = await getAllPortfolioIds()
+  
+  return ids.map((id) => ({
+    id: id,
+  }))
+}
+
 async function getProject(id: string): Promise<PortfolioItemWithCategory | null> {
   const { data: project, error } = await supabase
     .from('portfolio_items')
     .select('*')
-    .eq('id', id)
+    .eq('id', parseInt(id))
     .maybeSingle()
 
   if (error || !project) {
@@ -82,7 +104,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 bg-accent-500 text-white font-subheading hover:bg-accent-700 transition-colors pixel-border"
               >
-                <ExternalLink size={20} /> LIVE DEMO
+                <ExternalLink size={20} /> LET'S TAKE A LOOK
               </a>
             )}
             {project.github_url && (
@@ -170,7 +192,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-accent-500 hover:text-accent-700 transition-colors"
                     >
-                      <ExternalLink size={16} /> Live Demo
+                      <ExternalLink size={16} /> Let's take a look
                     </a>
                   )}
                   {project.github_url && (

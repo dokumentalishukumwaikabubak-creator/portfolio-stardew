@@ -60,7 +60,7 @@ export default function PortfolioCard({ item }: PortfolioCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 bg-accent-500 text-white hover:bg-accent-700 transition-colors"
-            title="Live Demo"
+            title="Let's take a look"
           >
             <ExternalLink size={20} />
           </a>

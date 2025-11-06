@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Briefcase, User, LogIn, LayoutDashboard } from 'lucide-react'
+import { Home, Briefcase, User, LogIn, LayoutDashboard, Globe } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useEffect, useState } from 'react'
 
 export default function Navigation() {
   const pathname = usePathname()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [language, setLanguage] = useState<'id' | 'en'>('id')
 
   useEffect(() => {
     // Check authentication status
@@ -25,10 +26,14 @@ export default function Navigation() {
   }, [])
 
   const navItems = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/portfolio', label: 'Tiko Site', icon: Briefcase },
-    { href: '/about', label: 'About', icon: User },
+    { href: '/', label: language === 'id' ? 'Beranda' : 'Home', icon: Home },
+    { href: '/portfolio', label: 'My Portfolio', icon: Briefcase },
+    { href: '/about', label: language === 'id' ? 'Tentang' : 'About', icon: User },
   ]
+
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'id' ? 'en' : 'id')
+  }
 
   const isActive = (path: string) => pathname === path
 
@@ -38,7 +43,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="font-heading text-xl text-primary-900 hover:text-accent-500 transition-colors">
-            PORTFOLIO
+            TIKO SITE
           </Link>
 
           {/* Navigation Links */}
@@ -68,17 +73,19 @@ export default function Navigation() {
                 className="flex items-center gap-2 font-subheading text-lg text-secondary-500 hover:text-secondary-700 transition-colors"
               >
                 <LayoutDashboard size={18} />
-                <span className="hidden md:inline">Admin</span>
+                <span className="hidden md:inline">{language === 'id' ? 'Admin' : 'Admin'}</span>
               </Link>
-            ) : (
-              <Link
-                href="/admin/login"
-                className="flex items-center gap-2 font-subheading text-lg text-neutral-500 hover:text-accent-500 transition-colors"
-              >
-                <LogIn size={18} />
-                <span className="hidden md:inline">Login</span>
-              </Link>
-            )}
+            ) : null}
+
+            {/* Language Switcher */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-2 font-subheading text-lg text-neutral-500 hover:text-accent-500 transition-colors"
+              title={language === 'id' ? 'Switch to English' : 'Switch to Indonesian'}
+            >
+              <Globe size={18} />
+              <span className="hidden md:inline">{language.toUpperCase()}</span>
+            </button>
           </div>
         </div>
       </div>

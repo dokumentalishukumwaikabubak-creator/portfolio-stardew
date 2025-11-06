@@ -13,6 +13,28 @@ interface Category {
   name: string
 }
 
+// Generate static params untuk admin portfolio
+async function getAllPortfolioIds(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('portfolio_items')
+    .select('id')
+    .order('created_at', { ascending: false })
+
+  if (error || !data) {
+    return []
+  }
+
+  return data.map(item => item.id.toString())
+}
+
+export async function generateStaticParams() {
+  const ids = await getAllPortfolioIds()
+  
+  return ids.map((id) => ({
+    id: id,
+  }))
+}
+
 export default function EditPortfolioPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
