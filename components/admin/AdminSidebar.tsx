@@ -36,8 +36,7 @@ export default function AdminSidebar() {
 
   const handleLogout = async () => {
     try {
-      const { createClient } = await import('@/lib/supabase');
-      const supabase = createClient();
+      const { supabase } = await import('@/lib/supabase');
       await supabase.auth.signOut();
       window.location.href = '/admin/login';
     } catch (error) {

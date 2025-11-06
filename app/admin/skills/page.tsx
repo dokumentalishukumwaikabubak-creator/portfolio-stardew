@@ -1,16 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
-
-interface Skill {
-  id: number;
-  name: string;
-  level: number;
-  category: string;
-}
+import { Skill, Database } from '@/types/database.types';
 
 export default function SkillsManagement() {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -23,7 +17,7 @@ export default function SkillsManagement() {
     category: 'Frontend'
   });
 
-  const supabase = createClient();
+  // const supabase = createClient(); // supabase sudah diimport sebagai instance
 
   useEffect(() => {
     fetchSkills();
@@ -48,7 +42,7 @@ export default function SkillsManagement() {
   const handleAddSkill = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('skills')
         .insert([{
           name: formData.name,
@@ -70,7 +64,7 @@ export default function SkillsManagement() {
 
   const handleEditSkill = async (skill: Skill) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('skills')
         .update({
           name: skill.name,
@@ -93,7 +87,7 @@ export default function SkillsManagement() {
     if (!confirm('Yakin ingin menghapus skill ini?')) return;
     
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('skills')
         .delete()
         .eq('id', id);

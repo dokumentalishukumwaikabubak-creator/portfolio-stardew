@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
@@ -27,7 +27,7 @@ export default function AdminDashboard() {
   })
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([])
 
-  const supabase = createClient();
+  // const supabase = createClient(); // supabase sudah diimport sebagai instance
 
   useEffect(() => {
     checkAuth()
