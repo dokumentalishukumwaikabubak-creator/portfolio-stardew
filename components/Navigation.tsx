@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation'
 import { Home, Briefcase, User, LogIn, LayoutDashboard, Globe } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useEffect, useState } from 'react'
+import { useLanguage } from './LanguageContext'
 
 export default function Navigation() {
   const pathname = usePathname()
+  const { language, setLanguage, t } = useLanguage()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [language, setLanguage] = useState<'id' | 'en'>('id')
 
   useEffect(() => {
     // Check authentication status
@@ -26,13 +27,13 @@ export default function Navigation() {
   }, [])
 
   const navItems = [
-    { href: '/', label: language === 'id' ? 'Beranda' : 'Home', icon: Home },
-    { href: '/portfolio', label: 'My Portfolio', icon: Briefcase },
-    { href: '/about', label: language === 'id' ? 'Tentang' : 'About', icon: User },
+    { href: '/', label: t('nav.home'), icon: Home },
+    { href: '/portfolio', label: t('nav.portfolio'), icon: Briefcase },
+    { href: '/about', label: t('nav.about'), icon: User },
   ]
 
   const toggleLanguage = () => {
-    setLanguage(prev => prev === 'id' ? 'en' : 'id')
+    setLanguage(language === 'id' ? 'en' : 'id')
   }
 
   const isActive = (path: string) => pathname === path
@@ -73,7 +74,7 @@ export default function Navigation() {
                 className="flex items-center gap-2 font-subheading text-lg text-secondary-500 hover:text-secondary-700 transition-colors"
               >
                 <LayoutDashboard size={18} />
-                <span className="hidden md:inline">{language === 'id' ? 'Admin' : 'Admin'}</span>
+                <span className="hidden md:inline">Admin</span>
               </Link>
             ) : null}
 
@@ -81,7 +82,7 @@ export default function Navigation() {
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-2 font-subheading text-lg text-neutral-500 hover:text-accent-500 transition-colors"
-              title={language === 'id' ? 'Switch to English' : 'Switch to Indonesian'}
+              title={t('nav.switch')}
             >
               <Globe size={18} />
               <span className="hidden md:inline">{language.toUpperCase()}</span>

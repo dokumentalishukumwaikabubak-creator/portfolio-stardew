@@ -1,6 +1,9 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { ExternalLink, Github, Briefcase } from 'lucide-react'
+import { useLanguage } from '../LanguageContext'
 import type { PortfolioItemWithCategory } from '@/types/database.types'
 
 interface PortfolioCardProps {
@@ -8,6 +11,8 @@ interface PortfolioCardProps {
 }
 
 export default function PortfolioCard({ item }: PortfolioCardProps) {
+  const { t } = useLanguage()
+  
   return (
     <div className="card-vintage hover:shadow-card-hover transition-all duration-normal group">
       {/* Image */}
@@ -26,7 +31,7 @@ export default function PortfolioCard({ item }: PortfolioCardProps) {
         )}
         {item.is_featured && (
           <div className="absolute top-2 right-2 bg-accent-500 text-white px-3 py-1 font-subheading text-sm pixel-border-secondary">
-            FEATURED
+            {t('detail.featured')}
           </div>
         )}
       </div>
@@ -52,7 +57,7 @@ export default function PortfolioCard({ item }: PortfolioCardProps) {
           href={`/portfolio/${item.id}`}
           className="flex-1 text-center py-2 bg-primary-500 text-white font-subheading hover:bg-primary-700 transition-colors"
         >
-          View Details
+          {t('portfolio.viewDetails')}
         </Link>
         {item.demo_url && (
           <a
@@ -60,7 +65,7 @@ export default function PortfolioCard({ item }: PortfolioCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 bg-accent-500 text-white hover:bg-accent-700 transition-colors"
-            title="Let's take a look"
+            title={t('portfolio.letsLook')}
           >
             <ExternalLink size={20} />
           </a>
@@ -71,7 +76,7 @@ export default function PortfolioCard({ item }: PortfolioCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 bg-neutral-700 text-white hover:bg-neutral-900 transition-colors"
-            title="GitHub"
+            title={t('portfolio.github')}
           >
             <Github size={20} />
           </a>

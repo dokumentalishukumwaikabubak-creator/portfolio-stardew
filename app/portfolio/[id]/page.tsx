@@ -1,32 +1,17 @@
 // @ts-nocheck
+'use client'
+
+// Remove generateStaticParams to avoid conflicts with client component
+// Static params will be generated at build time by the parent layout
+
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { ArrowLeft, ExternalLink, Github, Calendar } from 'lucide-react'
+import { useLanguage } from '@/components/LanguageContext'
+import { useEffect, useState } from 'react'
 import type { PortfolioItemWithCategory } from '@/types/database.types'
-
-// Generate static params untuk semua portfolio items
-async function getAllPortfolioIds(): Promise<string[]> {
-  const { data, error } = await supabase
-    .from('portfolio_items')
-    .select('id')
-    .order('created_at', { ascending: false })
-
-  if (error || !data) {
-    return []
-  }
-
-  return data.map(item => item.id.toString())
-}
-
-export async function generateStaticParams() {
-  const ids = await getAllPortfolioIds()
-  
-  return ids.map((id) => ({
-    id: id,
-  }))
-}
 
 async function getProject(id: string): Promise<PortfolioItemWithCategory | null> {
   const { data: project, error } = await supabase
@@ -53,9 +38,37 @@ async function getProject(id: string): Promise<PortfolioItemWithCategory | null>
   return { ...project, category: null }
 }
 
-export default async function PortfolioDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  const project = await getProject(id)
+export default function PortfolioDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t } = useLanguage()
+  const [project, setProject] = useState<PortfolioItemWithCategory | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function init() {
+      try {
+        const resolvedParams = await params
+        const projectData = await getProject(resolvedParams.id)
+        setProject(projectData)
+        if (!projectData) {
+          notFound()
+        }
+      } catch (error) {
+        console.error('Error loading project:', error)
+        notFound()
+      } finally {
+        setLoading(false)
+      }
+    }
+    init()
+  }, [params])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[70vh]">
+        <div className="animate-spin text-accent-500">{t('common.loading')}</div>
+      </div>
+    )
+  }
 
   if (!project) {
     notFound()
@@ -68,7 +81,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
         href="/portfolio"
         className="inline-flex items-center gap-2 font-subheading text-lg text-accent-500 hover:text-accent-700 transition-colors mb-8"
       >
-        <ArrowLeft size={20} /> KEMBALI KE PORTFOLIO
+        <ArrowLeft size={20} /> {t('detail.backToPortfolio')}
       </Link>
 
       {/* Project Hero */}
@@ -104,7 +117,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 bg-accent-500 text-white font-subheading hover:bg-accent-700 transition-colors pixel-border"
               >
-                <ExternalLink size={20} /> LET'S TAKE A LOOK
+                <ExternalLink size={20} /> {t('portfolio.letsLook').toUpperCase()}
               </a>
             )}
             {project.github_url && (
@@ -136,7 +149,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="card-vintage">
-            <h2 className="text-2xl font-heading mb-4">DESKRIPSI PROJECT</h2>
+            <h2 className="text-2xl font-heading mb-4">{t('detail.projectDescription')}</h2>
             {project.full_description ? (
               <div className="font-body text-lg text-neutral-700 leading-relaxed whitespace-pre-line">
                 {project.full_description}
@@ -152,17 +165,17 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
         {/* Sidebar Info */}
         <div className="lg:col-span-1">
           <div className="card-vintage">
-            <h3 className="text-xl font-heading mb-4">INFO</h3>
+            <h3 className="text-xl font-heading mb-4">{t('detail.info')}</h3>
             <div className="space-y-4 font-body">
               {project.category && (
                 <div>
-                  <div className="text-sm text-neutral-500 mb-1">Kategori</div>
+                  <div className="text-sm text-neutral-500 mb-1">{t('detail.category')}</div>
                   <div className="text-neutral-700 font-semibold">{project.category.name}</div>
                 </div>
               )}
               {project.created_at && (
                 <div>
-                  <div className="text-sm text-neutral-500 mb-1">Tanggal</div>
+                  <div className="text-sm text-neutral-500 mb-1">{t('detail.date')}</div>
                   <div className="text-neutral-700 font-semibold">
                     {new Date(project.created_at).toLocaleDateString('id-ID', {
                       year: 'numeric',
@@ -173,9 +186,9 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
               )}
               {project.is_featured && (
                 <div>
-                  <div className="text-sm text-neutral-500 mb-1">Status</div>
+                  <div className="text-sm text-neutral-500 mb-1">{t('detail.status')}</div>
                   <div className="inline-block px-3 py-1 bg-accent-100 text-accent-700 text-sm font-subheading">
-                    FEATURED
+                    {t('detail.featured')}
                   </div>
                 </div>
               )}
@@ -183,7 +196,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
 
             {(project.demo_url || project.github_url) && (
               <div className="mt-6 pt-6 border-t-2 border-neutral-200">
-                <h4 className="text-sm text-neutral-500 mb-3">Links</h4>
+                <h4 className="text-sm text-neutral-500 mb-3">{t('detail.links')}</h4>
                 <div className="space-y-2">
                   {project.demo_url && (
                     <a
@@ -192,7 +205,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-accent-500 hover:text-accent-700 transition-colors"
                     >
-                      <ExternalLink size={16} /> Let's take a look
+                      <ExternalLink size={16} /> {t('portfolio.letsLook')}
                     </a>
                   )}
                   {project.github_url && (
@@ -202,7 +215,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-neutral-700 hover:text-neutral-900 transition-colors"
                     >
-                      <Github size={16} /> Source Code
+                      <Github size={16} /> {t('detail.sourceCode')}
                     </a>
                   )}
                 </div>

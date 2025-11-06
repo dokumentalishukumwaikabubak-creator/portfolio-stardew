@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useLanguage } from '../LanguageContext'
 import type { PortfolioItemWithCategory, Category } from '@/types/database.types'
 import PortfolioCard from './PortfolioCard'
 import { Loader2 } from 'lucide-react'
@@ -11,6 +12,7 @@ interface PortfolioFilterProps {
 }
 
 export default function PortfolioFilter({ categories, projects }: PortfolioFilterProps) {
+  const { t } = useLanguage()
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -32,7 +34,7 @@ export default function PortfolioFilter({ categories, projects }: PortfolioFilte
                 : 'bg-background-surface text-neutral-700 hover:bg-primary-100'
             }`}
           >
-            ALL
+            {t('portfolio.filter.all')}
           </button>
           {categories.map((category) => (
             <button
@@ -64,7 +66,7 @@ export default function PortfolioFilter({ categories, projects }: PortfolioFilte
       ) : (
         <div className="card-vintage text-center py-16">
           <p className="font-subheading text-xl text-neutral-500">
-            Belum ada project untuk kategori ini
+            {t('portfolio.noProjects')}
           </p>
         </div>
       )}
