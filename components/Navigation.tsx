@@ -26,14 +26,14 @@ export default function Navigation() {
 
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/portfolio', label: 'Portfolio', icon: Briefcase },
+    { href: '/portfolio', label: 'Tiko Site', icon: Briefcase },
     { href: '/about', label: 'About', icon: User },
   ]
 
   const isActive = (path: string) => pathname === path
 
   return (
-    <nav className="bg-background-surface pixel-border mb-8">
+    <nav className="bg-background-surface pixel-border mb-8 sticky top-0 z-50 backdrop-blur-sm bg-background-surface/95">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

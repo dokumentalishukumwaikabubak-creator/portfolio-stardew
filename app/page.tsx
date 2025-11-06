@@ -20,11 +20,10 @@ async function getPersonalInfo(): Promise<PersonalInfo | null> {
   return data
 }
 
-async function getFeaturedProjects() {
+async function getLatestProjects() {
   const { data: projects, error: projectsError } = await supabase
     .from('portfolio_items')
     .select('*')
-    .eq('is_featured', true)
     .order('created_at', { ascending: false })
     .limit(3)
 
@@ -52,25 +51,12 @@ async function getFeaturedProjects() {
   return []
 }
 
-async function getStats() {
-  const [projectsCount, categoriesCount, skillsCount] = await Promise.all([
-    supabase.from('portfolio_items').select('*', { count: 'exact', head: true }),
-    supabase.from('categories').select('*', { count: 'exact', head: true }),
-    supabase.from('skills').select('*', { count: 'exact', head: true }),
-  ])
 
-  return {
-    projects: projectsCount.count || 0,
-    categories: categoriesCount.count || 0,
-    skills: skillsCount.count || 0,
-  }
-}
 
 export default async function HomePage() {
-  const [personalInfo, featuredProjects, stats] = await Promise.all([
+  const [personalInfo, latestProjects] = await Promise.all([
     getPersonalInfo(),
-    getFeaturedProjects(),
-    getStats(),
+    getLatestProjects(),
   ])
 
   return (
@@ -101,36 +87,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="mb-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="card-vintage text-center">
-            <div className="text-4xl font-heading text-accent-500 mb-2">{stats.projects}</div>
-            <div className="font-subheading text-lg text-neutral-700 flex items-center justify-center gap-2">
-              <Code size={20} /> PROJECTS
-            </div>
-          </div>
-          <div className="card-vintage text-center">
-            <div className="text-4xl font-heading text-secondary-500 mb-2">{stats.categories}</div>
-            <div className="font-subheading text-lg text-neutral-700 flex items-center justify-center gap-2">
-              <Palette size={20} /> CATEGORIES
-            </div>
-          </div>
-          <div className="card-vintage text-center">
-            <div className="text-4xl font-heading text-primary-500 mb-2">{stats.skills}</div>
-            <div className="font-subheading text-lg text-neutral-700 flex items-center justify-center gap-2">
-              <Star size={20} /> SKILLS
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Projects */}
-      {featuredProjects.length > 0 && (
+      {/* Latest Projects */}
+      {latestProjects.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-heading text-primary-900 flex items-center gap-3">
-              <Star className="text-accent-500" /> FEATURED PROJECTS
+              <Star className="text-accent-500" /> LATEST PROJECTS
             </h2>
             <Link 
               href="/portfolio"
@@ -141,7 +103,7 @@ export default async function HomePage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProjects.map((project) => (
+            {latestProjects.map((project) => (
               <PortfolioCard key={project.id} item={project} />
             ))}
           </div>
