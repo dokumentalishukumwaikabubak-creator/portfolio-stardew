@@ -1,46 +1,65 @@
+'use client'
+
 // @ts-nocheck
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Mail, Github, Linkedin, Twitter, Star, User } from 'lucide-react'
+import { Mail, Github, Linkedin, Twitter, Star, User, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import type { PersonalInfo, Skill } from '@/types/database.types'
+import { useLanguage } from '@/components/LanguageContext'
 
-async function getPersonalInfo(): Promise<PersonalInfo | null> {
-  const { data, error } = await supabase
-    .from('personal_info')
-    .select('*')
-    .maybeSingle()
+export default function AboutPage() {
+  const { t } = useLanguage()
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null)
+  const [skills, setSkills] = useState<Skill[]>([])
+  const [loading, setLoading] = useState(true)
 
-  if (error) {
-    console.error('Error fetching personal info:', error)
-    return null
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  async function fetchData() {
+    try {
+      const [personalInfoResult, skillsResult] = await Promise.all([
+        supabase
+          .from('personal_info')
+          .select('*')
+          .maybeSingle(),
+        supabase
+          .from('skills')
+          .select('*')
+          .order('level', { ascending: false })
+      ])
+
+      if (personalInfoResult.error) {
+        console.error('Error fetching personal info:', personalInfoResult.error)
+      } else {
+        setPersonalInfo(personalInfoResult.data)
+      }
+
+      if (skillsResult.error) {
+        console.error('Error fetching skills:', skillsResult.error)
+      } else {
+        setSkills(skillsResult.data || [])
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  return data
-}
-
-async function getSkills(): Promise<Skill[]> {
-  const { data, error } = await supabase
-    .from('skills')
-    .select('*')
-    .order('level', { ascending: false })
-
-  if (error) {
-    console.error('Error fetching skills:', error)
-    return []
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[70vh]">
+        <Loader2 className="animate-spin text-accent-500" size={48} />
+      </div>
+    )
   }
-
-  return data || []
-}
-
-export default async function AboutPage() {
-  const [personalInfo, skills] = await Promise.all([
-    getPersonalInfo(),
-    getSkills(),
-  ])
 
   // Group skills by category
   const skillsByCategory = skills.reduce((acc, skill) => {
-    const category = skill.category || 'Other'
+    const category = skill.category || t('common.other')
     if (!acc[category]) {
       acc[category] = []
     }
@@ -50,7 +69,7 @@ export default async function AboutPage() {
 
   return (
     <div>
-      <h1 className="page-header">ABOUT ME</h1>
+      <h1 className="page-header">{t('about.title')}</h1>
 
       {/* About Content */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
@@ -83,7 +102,7 @@ export default async function AboutPage() {
         {/* Bio */}
         <div className="md:col-span-2">
           <div className="card-vintage h-full">
-            <h3 className="font-heading text-2xl mb-4">BIO</h3>
+            <h3 className="font-heading text-2xl mb-4">{t('about.bio')}</h3>
             <p className="font-body text-lg text-neutral-700 leading-relaxed whitespace-pre-line">
               {personalInfo?.bio || 'Tell us about yourself...'}
             </p>
@@ -94,7 +113,7 @@ export default async function AboutPage() {
       {/* Skills Section */}
       {Object.keys(skillsByCategory).length > 0 && (
         <div className="mb-16">
-          <h2 className="text-3xl font-heading text-primary-900 mb-8">SKILLS</h2>
+          <h2 className="text-3xl font-heading text-primary-900 mb-8">{t('about.skills')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {Object.entries(skillsByCategory).map(([category, categorySkills]) => (
               <div key={category} className="card-vintage">
@@ -128,7 +147,7 @@ export default async function AboutPage() {
       {/* Contact Section */}
       {personalInfo && (
         <div className="card-vintage bg-gradient-to-r from-primary-100 to-secondary-100">
-          <h2 className="text-3xl font-heading text-center mb-6">GET IN TOUCH</h2>
+          <h2 className="text-3xl font-heading text-center mb-6">{t('about.getInTouch')}</h2>
           <div className="flex flex-wrap gap-4 justify-center">
             {personalInfo.email && (
               <a
@@ -136,7 +155,7 @@ export default async function AboutPage() {
                 className="flex items-center gap-2 px-6 py-3 bg-background-surface pixel-border hover:shadow-card-hover transition-all"
               >
                 <Mail size={20} />
-                <span className="font-subheading">Email</span>
+                <span className="font-subheading">{t('about.email')}</span>
               </a>
             )}
             {personalInfo.github_url && (
@@ -147,7 +166,7 @@ export default async function AboutPage() {
                 className="flex items-center gap-2 px-6 py-3 bg-background-surface pixel-border hover:shadow-card-hover transition-all"
               >
                 <Github size={20} />
-                <span className="font-subheading">GitHub</span>
+                <span className="font-subheading">{t('about.github')}</span>
               </a>
             )}
             {personalInfo.linkedin_url && (
@@ -158,7 +177,7 @@ export default async function AboutPage() {
                 className="flex items-center gap-2 px-6 py-3 bg-background-surface pixel-border hover:shadow-card-hover transition-all"
               >
                 <Linkedin size={20} />
-                <span className="font-subheading">LinkedIn</span>
+                <span className="font-subheading">{t('about.linkedin')}</span>
               </a>
             )}
             {personalInfo.twitter_url && (
@@ -169,7 +188,7 @@ export default async function AboutPage() {
                 className="flex items-center gap-2 px-6 py-3 bg-background-surface pixel-border hover:shadow-card-hover transition-all"
               >
                 <Twitter size={20} />
-                <span className="font-subheading">Twitter</span>
+                <span className="font-subheading">{t('about.twitter')}</span>
               </a>
             )}
           </div>

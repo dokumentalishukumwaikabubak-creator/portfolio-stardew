@@ -32,6 +32,12 @@ const translations: Translations = {
   'about.skills': { id: 'Keahlian', en: 'Skills' },
   'about.experience': { id: 'Pengalaman', en: 'Experience' },
   'about.contact': { id: 'Kontak', en: 'Contact' },
+  'about.bio': { id: 'BIO', en: 'BIO' },
+  'about.getInTouch': { id: 'HUBUNGI SAYA', en: 'GET IN TOUCH' },
+  'about.email': { id: 'Email', en: 'Email' },
+  'about.github': { id: 'GitHub', en: 'GitHub' },
+  'about.linkedin': { id: 'LinkedIn', en: 'LinkedIn' },
+  'about.twitter': { id: 'Twitter', en: 'Twitter' },
 
   // Portfolio page
   'portfolio.title': { id: 'PORTFOLIO', en: 'PORTFOLIO' },
@@ -65,6 +71,7 @@ const translations: Translations = {
   'common.add': { id: 'Tambah', en: 'Add' },
   'common.update': { id: 'Update', en: 'Update' },
   'common.create': { id: 'Buat', en: 'Create' },
+  'common.other': { id: 'Lainnya', en: 'Other' },
 }
 
 interface LanguageContextType {
@@ -76,7 +83,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('id')
+  const [language, setLanguage] = useState<Language>('en')
 
   useEffect(() => {
     // Load saved language from localStorage
