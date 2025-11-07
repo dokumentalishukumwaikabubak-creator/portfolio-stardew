@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Briefcase, User, LogIn, LayoutDashboard, Globe } from 'lucide-react'
+import { Home, Briefcase, User, LogIn, LayoutDashboard } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useEffect, useState } from 'react'
 import { useLanguage } from './LanguageContext'
 
 export default function Navigation() {
   const pathname = usePathname()
-  const { language, setLanguage, t } = useLanguage()
+  const { t } = useLanguage()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
@@ -32,10 +32,6 @@ export default function Navigation() {
     { href: '/about', label: t('nav.about'), icon: User },
   ]
 
-  const toggleLanguage = () => {
-    setLanguage(language === 'id' ? 'en' : 'id')
-  }
-
   const isActive = (path: string) => pathname === path
 
   return (
@@ -44,7 +40,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="font-heading text-xl text-primary-900 hover:text-accent-500 transition-colors">
-            TIKO SITE
+            TIKO CYBERSPACE
           </Link>
 
           {/* Navigation Links */}
@@ -77,16 +73,6 @@ export default function Navigation() {
                 <span className="hidden md:inline">Admin</span>
               </Link>
             ) : null}
-
-            {/* Language Switcher */}
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-2 font-subheading text-lg text-neutral-500 hover:text-accent-500 transition-colors"
-              title={t('nav.switch')}
-            >
-              <Globe size={18} />
-              <span className="hidden md:inline">{language.toUpperCase()}</span>
-            </button>
           </div>
         </div>
       </div>

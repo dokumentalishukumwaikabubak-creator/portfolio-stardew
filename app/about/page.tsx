@@ -3,7 +3,7 @@
 // @ts-nocheck
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Mail, Github, Linkedin, Twitter, Star, User, Loader2 } from 'lucide-react'
+import { Mail, Github, Linkedin, Twitter, User, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import type { PersonalInfo, Skill } from '@/types/database.types'
 import { useLanguage } from '@/components/LanguageContext'
@@ -125,15 +125,6 @@ export default function AboutPage() {
                     <div key={skill.id}>
                       <div className="flex justify-between items-center mb-1">
                         <span className="font-body text-neutral-700">{skill.name}</span>
-                        <div className="flex gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={i < skill.level ? 'fill-accent-500 text-accent-500' : 'text-neutral-300'}
-                            />
-                          ))}
-                        </div>
                       </div>
                     </div>
                   ))}

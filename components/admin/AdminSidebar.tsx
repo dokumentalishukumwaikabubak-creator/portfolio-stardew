@@ -34,16 +34,6 @@ const menuItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
 
-  const handleLogout = async () => {
-    try {
-      const { supabase } = await import('@/lib/supabase');
-      await supabase.auth.signOut();
-      window.location.href = '/admin/login';
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
   return (
     <div className="w-64 bg-white shadow-lg h-full">
       <div className="p-6 border-b">
@@ -73,16 +63,6 @@ export default function AdminSidebar() {
           })}
         </ul>
       </nav>
-      
-      <div className="absolute bottom-4 left-4 right-4">
-        <button
-          onClick={handleLogout}
-          className="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
-        >
-          <span>🚪</span>
-          <span>Logout</span>
-        </button>
-      </div>
     </div>
   );
 }

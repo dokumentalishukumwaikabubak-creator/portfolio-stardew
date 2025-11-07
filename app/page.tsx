@@ -124,7 +124,7 @@ export default function HomePage() {
         <section>
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-heading text-primary-900 flex items-center gap-3">
-              <Star className="text-accent-500" /> {t('portfolio.title')} TERBARU
+              <Star className="text-accent-500" /> {t('portfolio.title')}
             </h2>
             <Link 
               href="/portfolio"

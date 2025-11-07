@@ -133,14 +133,28 @@ export default function PortfolioDetailPage({ params }: { params: Promise<{ id: 
           </div>
         </div>
 
-        {project.created_at && (
+        {(project.start_date || project.end_date) && (
           <div className="flex items-center gap-2 text-neutral-500 font-body">
             <Calendar size={16} />
-            <span>{new Date(project.created_at).toLocaleDateString('id-ID', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}</span>
+            <span>
+              {project.start_date 
+                ? new Date(project.start_date).toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })
+                : 'N/A'
+              }
+              {' - '}
+              {project.end_date 
+                ? new Date(project.end_date).toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })
+                : 'Present'
+              }
+            </span>
           </div>
         )}
       </div>
@@ -173,14 +187,27 @@ export default function PortfolioDetailPage({ params }: { params: Promise<{ id: 
                   <div className="text-neutral-700 font-semibold">{project.category.name}</div>
                 </div>
               )}
-              {project.created_at && (
+              {(project.start_date || project.end_date) && (
                 <div>
                   <div className="text-sm text-neutral-500 mb-1">{t('detail.date')}</div>
                   <div className="text-neutral-700 font-semibold">
-                    {new Date(project.created_at).toLocaleDateString('id-ID', {
-                      year: 'numeric',
-                      month: 'long'
-                    })}
+                    {project.start_date 
+                      ? new Date(project.start_date).toLocaleDateString('id-ID', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })
+                      : 'N/A'
+                    }
+                    {' - '}
+                    {project.end_date 
+                      ? new Date(project.end_date).toLocaleDateString('id-ID', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })
+                      : 'Present'
+                    }
                   </div>
                 </div>
               )}

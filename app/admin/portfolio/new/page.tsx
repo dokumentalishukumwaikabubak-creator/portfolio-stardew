@@ -27,6 +27,8 @@ export default function NewPortfolioPage() {
     demo_url: '',
     github_url: '',
     is_featured: false,
+    start_date: '',
+    end_date: '',
   })
 
   useEffect(() => {
@@ -94,6 +96,8 @@ export default function NewPortfolioPage() {
           github_url: formData.github_url || null,
           is_featured: formData.is_featured,
           image_url: imageUrl,
+          start_date: formData.start_date || null,
+          end_date: formData.end_date || null,
         }])
         .select()
         .maybeSingle()
@@ -256,6 +260,32 @@ export default function NewPortfolioPage() {
               </p>
             </div>
           )}
+        </div>
+
+        {/* Project Dates */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block font-subheading text-lg mb-2">
+              START DATE
+            </label>
+            <input
+              type="date"
+              value={formData.start_date}
+              onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+              className="input-retro"
+            />
+          </div>
+          <div>
+            <label className="block font-subheading text-lg mb-2">
+              END DATE (kosongkan jika masih berjalan)
+            </label>
+            <input
+              type="date"
+              value={formData.end_date}
+              onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+              className="input-retro"
+            />
+          </div>
         </div>
 
         {/* Featured */}

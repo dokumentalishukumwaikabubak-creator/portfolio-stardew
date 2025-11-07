@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, ReactNode } from 'react'
 
 type Language = 'id' | 'en'
 
@@ -15,13 +15,13 @@ const translations: Translations = {
   // Navigation
   'nav.home': { id: 'Beranda', en: 'Home' },
   'nav.portfolio': { id: 'My Portfolio', en: 'My Portfolio' },
-  'nav.about': { id: 'Tentang', en: 'About' },
+  'nav.about': { id: 'About Me', en: 'About Me' },
   'nav.language': { id: 'Bahasa', en: 'Language' },
   'nav.switch': { id: 'Ganti Bahasa', en: 'Switch Language' },
 
   // Home page
   'home.title': { id: 'SELAMAT DATANG', en: 'WELCOME' },
-  'home.subtitle': { id: 'Portfolio Personal dengan Tema Retro Stardew Valley', en: 'Personal Portfolio with Retro Stardew Valley Theme' },
+  'home.subtitle': { id: 'GET IN TOUCH', en: 'GET IN TOUCH' },
   'home.description': { id: 'Jelajahi karya-karya terbaik saya dalam bidang development, design, dan teknologi.', en: 'Explore my best works in development, design, and technology.' },
   'home.viewPortfolio': { id: 'Lihat Portfolio', en: 'View Portfolio' },
   'home.aboutMe': { id: 'Tentang Saya', en: 'About Me' },
@@ -83,19 +83,12 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en')
+  // Always use English, language switching is disabled
+  const language: Language = 'en'
 
-  useEffect(() => {
-    // Load saved language from localStorage
-    const savedLanguage = localStorage.getItem('language') as Language
-    if (savedLanguage && ['id', 'en'].includes(savedLanguage)) {
-      setLanguage(savedLanguage)
-    }
-  }, [])
-
-  const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang)
-    localStorage.setItem('language', lang)
+  // Disabled: no language switching allowed
+  const handleSetLanguage = (_lang: Language) => {
+    // Do nothing - language is locked to English
   }
 
   const t = (key: string): string => {

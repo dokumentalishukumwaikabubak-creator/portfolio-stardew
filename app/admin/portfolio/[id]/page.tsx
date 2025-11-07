@@ -33,6 +33,8 @@ export default function EditPortfolioPage({ params }: { params: Promise<{ id: st
     demo_url: '',
     github_url: '',
     is_featured: false,
+    start_date: '',
+    end_date: '',
   })
 
   useEffect(() => {
@@ -71,6 +73,8 @@ export default function EditPortfolioPage({ params }: { params: Promise<{ id: st
         demo_url: item.demo_url || '',
         github_url: item.github_url || '',
         is_featured: item.is_featured || false,
+        start_date: item.start_date ? item.start_date.split('T')[0] : '',
+        end_date: item.end_date ? item.end_date.split('T')[0] : '',
       })
       setCurrentImageUrl(item.image_url)
     }
@@ -128,6 +132,8 @@ export default function EditPortfolioPage({ params }: { params: Promise<{ id: st
           github_url: formData.github_url || null,
           is_featured: formData.is_featured,
           image_url: imageUrl,
+          start_date: formData.start_date || null,
+          end_date: formData.end_date || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', portfolioId)
@@ -290,6 +296,32 @@ export default function EditPortfolioPage({ params }: { params: Promise<{ id: st
               </label>
             </div>
           )}
+        </div>
+
+        {/* Project Dates */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block font-subheading text-lg mb-2">
+              START DATE
+            </label>
+            <input
+              type="date"
+              value={formData.start_date}
+              onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+              className="input-retro"
+            />
+          </div>
+          <div>
+            <label className="block font-subheading text-lg mb-2">
+              END DATE (kosongkan jika masih berjalan)
+            </label>
+            <input
+              type="date"
+              value={formData.end_date}
+              onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+              className="input-retro"
+            />
+          </div>
         </div>
 
         {/* Featured */}
