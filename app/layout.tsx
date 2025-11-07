@@ -7,15 +7,8 @@ import { LanguageProvider } from "@/components/LanguageContext";
 export const metadata: Metadata = {
   title: "Tiko Cyberspace",
   description: "Personal Website Tiko Aprilianto",
-  icons: {
-    icon: [
-      { url: "/icon.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon.png", sizes: "16x16", type: "image/png" },
-    ],
-    apple: [
-      { url: "/icon.png", sizes: "180x180", type: "image/png" },
-    ],
-  },
+  // Next.js will automatically use app/icon.png or public/icon.png
+  // No need to specify in metadata if using standard location
 };
 
 export default function RootLayout({

@@ -1,22 +1,55 @@
 // @ts-nocheck
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { LogIn, Loader2 } from 'lucide-react'
+import { LogIn, Loader2, AlertCircle } from 'lucide-react'
+import { checkRateLimit, getRateLimitStatus } from '@/lib/rateLimit'
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [rateLimitStatus, setRateLimitStatus] = useState<{ remaining: number; resetTime: number; blocked: boolean } | null>(null)
+
+  useEffect(() => {
+    // Check if user is already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        const redirect = searchParams.get('redirect') || '/admin/dashboard'
+        router.push(redirect)
+      }
+    })
+
+    // Check rate limit status
+    if (email) {
+      const status = getRateLimitStatus(email)
+      setRateLimitStatus(status)
+    }
+  }, [email, router, searchParams])
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError('')
+
+    // Check rate limit
+    const rateLimit = checkRateLimit(email || 'unknown')
+    if (!rateLimit.allowed) {
+      const minutesLeft = Math.ceil((rateLimit.resetTime - Date.now()) / 60000)
+      setError(`Too many login attempts. Please try again in ${minutesLeft} minute(s).`)
+      setLoading(false)
+      setRateLimitStatus({
+        remaining: 0,
+        resetTime: rateLimit.resetTime,
+        blocked: true,
+      })
+      return
+    }
 
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
@@ -24,13 +57,20 @@ export default function AdminLoginPage() {
     })
 
     if (signInError) {
-      setError(signInError.message)
+      // Generic error message untuk security (tidak reveal apakah email exist atau tidak)
+      setError('Invalid email or password')
+      // Log actual error untuk debugging (hanya di development)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Login error:', signInError)
+      }
       setLoading(false)
+      setRateLimitStatus(getRateLimitStatus(email))
       return
     }
 
     if (data.session) {
-      router.push('/admin/dashboard')
+      const redirect = searchParams.get('redirect') || '/admin/dashboard'
+      router.push(redirect)
       router.refresh()
     }
 
@@ -78,8 +118,18 @@ export default function AdminLoginPage() {
           </div>
 
           {error && (
-            <div className="p-4 bg-semantic-error/10 border-2 border-semantic-error text-semantic-error font-body">
-              {error}
+            <div className="p-4 bg-semantic-error/10 border-2 border-semantic-error text-semantic-error font-body flex items-start gap-2">
+              <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold mb-1">Login Failed</p>
+                <p className="text-sm">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {rateLimitStatus && rateLimitStatus.remaining < 3 && rateLimitStatus.remaining > 0 && (
+            <div className="p-3 bg-yellow-50 border-2 border-yellow-400 text-yellow-800 font-body text-sm">
+              ⚠️ {rateLimitStatus.remaining} attempt(s) remaining
             </div>
           )}
 
