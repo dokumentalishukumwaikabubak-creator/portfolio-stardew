@@ -10,10 +10,41 @@ interface AdminHeaderProps {
 export default function AdminHeader({ title, subtitle }: AdminHeaderProps) {
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout error:', error);
+      }
+      
+      // Clear any local storage items
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('language');
+        // Clear all Supabase related items
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('sb-')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
+      
+      // Clear session storage
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear();
+      }
+      
+      // Small delay to ensure session is cleared
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Force full page reload to ensure clean state
       window.location.href = '/admin/login';
     } catch (error) {
       console.error('Logout error:', error);
+      // Even if there's an error, force redirect and clear storage
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = '/admin/login';
+      }
     }
   };
 

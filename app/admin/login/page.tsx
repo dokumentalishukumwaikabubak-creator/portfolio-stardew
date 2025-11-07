@@ -17,13 +17,19 @@ export default function AdminLoginPage() {
   const [rateLimitStatus, setRateLimitStatus] = useState<{ remaining: number; resetTime: number; blocked: boolean } | null>(null)
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check if user is already logged in (with small delay to avoid race condition)
+    const checkSession = async () => {
+      // Small delay to ensure logout is complete
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         const redirect = searchParams.get('redirect') || '/admin/dashboard'
         router.push(redirect)
       }
-    })
+    }
+    
+    checkSession()
 
     // Check rate limit status
     if (email) {
