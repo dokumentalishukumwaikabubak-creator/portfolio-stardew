@@ -24,19 +24,21 @@ async function getPersonalInfo(): Promise<PersonalInfo | null> {
   return data
 }
 
-async function getLatestProjects() {
+// Fetch projects that admin has marked to show on home (is_featured)
+async function getFeaturedProjects(limit: number = 6) {
   const { data: projects, error: projectsError } = await supabase
     .from('portfolio_items')
     .select('*')
+    .eq('is_featured', true)
     .order('created_at', { ascending: false })
-    .limit(3)
+    .limit(limit)
 
   if (projectsError) {
-    console.error('Error fetching projects:', projectsError)
+    console.error('Error fetching featured projects:', projectsError)
     return []
   }
 
-  // Manually fetch categories
+  // Manually fetch categories for the returned projects
   if (projects && projects.length > 0) {
     const categoryIds = [...new Set(projects.map(p => p.category_id).filter(Boolean))] as number[]
     const { data: categories } = await supabase
@@ -68,7 +70,8 @@ export default function HomePage() {
       try {
         const [personalInfoData, latestProjectsData] = await Promise.all([
           getPersonalInfo(),
-          getLatestProjects(),
+          // get projects selected by admin for home page
+          getFeaturedProjects(6),
         ])
         
         setPersonalInfo(personalInfoData)

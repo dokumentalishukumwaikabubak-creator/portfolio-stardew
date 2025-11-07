@@ -76,6 +76,27 @@ export default function AdminPortfolioPage() {
     setDeleting(null)
   }
 
+  // Toggle featured status for a portfolio item
+  const [updatingFeatured, setUpdatingFeatured] = useState<number | null>(null)
+
+  async function toggleFeatured(id: number, current: boolean) {
+    setUpdatingFeatured(id)
+    const { error, data } = await supabase
+      .from('portfolio_items')
+      .update({ is_featured: !current })
+      .eq('id', id)
+      .select()
+
+    if (error) {
+      alert('Error updating featured status: ' + error.message)
+    } else if (data && data.length > 0) {
+      // update local state
+      setItems(items.map(i => (i.id === id ? { ...i, is_featured: data[0].is_featured } : i)))
+    }
+
+    setUpdatingFeatured(null)
+  }
+
   function getCategoryName(categoryId: number | null) {
     if (!categoryId) return 'Uncategorized'
     const category = categories.find(c => c.id === categoryId)
@@ -156,13 +177,24 @@ export default function AdminPortfolioPage() {
                       </span>
                     </td>
                     <td className="p-4">
-                      {item.is_featured ? (
-                        <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 text-sm font-body">
-                          Featured
-                        </span>
-                      ) : (
-                        <span className="text-neutral-400 text-sm">-</span>
-                      )}
+                      {/* Toggle featured on/off */}
+                      <div className="flex items-center gap-3">
+                        {item.is_featured ? (
+                          <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 text-sm font-body">
+                            Featured
+                          </span>
+                        ) : (
+                          <span className="text-neutral-400 text-sm">-</span>
+                        )}
+
+                        <button
+                          onClick={() => toggleFeatured(item.id, !!item.is_featured)}
+                          disabled={updatingFeatured === item.id}
+                          className="px-3 py-1 bg-background-surface text-sm hover:bg-primary-100 transition-colors disabled:opacity-50"
+                        >
+                          {updatingFeatured === item.id ? '...' : (item.is_featured ? 'Unset' : 'Set')}
+                        </button>
+                      </div>
                     </td>
                     <td className="p-4 text-sm text-neutral-600">
                       {new Date(item.created_at).toLocaleDateString('id-ID')}
