@@ -121,6 +121,9 @@ export interface Database {
           linkedin_url?: string | null
           twitter_url?: string | null
           profile_image_url?: string | null
+          hero_title?: string | null
+          hero_subtitle?: string | null
+          hero_tagline?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -134,6 +137,9 @@ export interface Database {
           linkedin_url?: string | null
           twitter_url?: string | null
           profile_image_url?: string | null
+          hero_title?: string | null
+          hero_subtitle?: string | null
+          hero_tagline?: string | null
           created_at?: string
           updated_at?: string
         }

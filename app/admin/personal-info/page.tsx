@@ -3,6 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, uploadImage, deleteImage } from '@/lib/supabase'
+import type { Database } from '@/types/database.types'
+
+type PersonalInfoRow = Database['public']['Tables']['personal_info']['Row']
+type PersonalInfoInsert = Database['public']['Tables']['personal_info']['Insert']
+type PersonalInfoUpdate = Database['public']['Tables']['personal_info']['Update']
 import { Save, Loader2, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 
@@ -44,7 +49,12 @@ export default function AdminPersonalInfoPage() {
     const { data, error } = await supabase
       .from('personal_info')
       .select('*')
-      .maybeSingle()
+      .maybeSingle() as { data: PersonalInfoRow | null, error: any }
+
+    if (error) {
+      console.error('Error fetching personal info:', error)
+      return
+    }
 
     if (data) {
       setPersonalInfoId(data.id)
@@ -104,7 +114,7 @@ export default function AdminPersonalInfoPage() {
         }
       }
 
-      const updateData = {
+      const updateData: PersonalInfoUpdate = {
         name: formData.name,
         title: formData.title,
         bio: formData.bio,
@@ -123,7 +133,7 @@ export default function AdminPersonalInfoPage() {
         // Update existing
         const { error } = await supabase
           .from('personal_info')
-          .update(updateData)
+          .update(updateData as PersonalInfoUpdate)
           .eq('id', personalInfoId)
 
         if (error) throw error
@@ -131,7 +141,7 @@ export default function AdminPersonalInfoPage() {
         // Insert new (first time)
         const { error } = await supabase
           .from('personal_info')
-          .insert([updateData])
+          .insert([updateData as PersonalInfoInsert])
 
         if (error) throw error
       }
