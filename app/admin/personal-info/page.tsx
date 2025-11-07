@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -19,6 +18,9 @@ export default function AdminPersonalInfoPage() {
     name: '',
     title: '',
     bio: '',
+    hero_title: '',
+    hero_subtitle: '',
+    hero_tagline: '',
     email: '',
     github_url: '',
     linkedin_url: '',
@@ -50,6 +52,9 @@ export default function AdminPersonalInfoPage() {
         name: data.name || '',
         title: data.title || '',
         bio: data.bio || '',
+        hero_title: data.hero_title || '',
+        hero_subtitle: data.hero_subtitle || '',
+        hero_tagline: data.hero_tagline || '',
         email: data.email || '',
         github_url: data.github_url || '',
         linkedin_url: data.linkedin_url || '',
@@ -103,6 +108,9 @@ export default function AdminPersonalInfoPage() {
         name: formData.name,
         title: formData.title,
         bio: formData.bio,
+        hero_title: formData.hero_title,
+        hero_subtitle: formData.hero_subtitle,
+        hero_tagline: formData.hero_tagline,
         email: formData.email,
         github_url: formData.github_url || null,
         linkedin_url: formData.linkedin_url || null,
@@ -200,7 +208,7 @@ export default function AdminPersonalInfoPage() {
           {/* Name */}
           <div className="mb-6">
             <label className="block font-subheading text-lg mb-2">
-              FULL NAME *
+              FULL NAME
             </label>
             <input
               type="text"
@@ -208,62 +216,129 @@ export default function AdminPersonalInfoPage() {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="input-retro"
               placeholder="John Doe"
-              required
-            />
-          </div>
-
-          {/* Title */}
-          <div className="mb-6">
-            <label className="block font-subheading text-lg mb-2">
-              TITLE / TAGLINE *
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="input-retro"
-              placeholder="Full Stack Developer"
-              required
-            />
-          </div>
-
-          {/* Bio */}
-          <div className="mb-6">
-            <label className="block font-subheading text-lg mb-2">
-              BIO *
-            </label>
-            <textarea
-              value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              className="input-retro"
-              rows={8}
-              placeholder="Tell us about yourself..."
-              required
             />
             <p className="text-sm text-neutral-500 mt-2">
-              Akan ditampilkan di Home page dan About page
+              Digunakan di About page dan meta data
             </p>
           </div>
 
-          {/* Email */}
-          <div className="mb-6">
-            <label className="block font-subheading text-lg mb-2">
-              EMAIL *
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="input-retro"
-              placeholder="contact@example.com"
-              required
-            />
+          {/* Hero Section Fields */}
+          <div className="border-t-2 border-neutral-200 pt-6 mt-8">
+            <h3 className="text-2xl font-heading text-primary-900 mb-6">HERO SECTION</h3>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block font-subheading text-lg mb-2">
+                  HERO TITLE *
+                </label>
+                <input
+                  type="text"
+                  value={formData.hero_title}
+                  onChange={(e) => setFormData({ ...formData, hero_title: e.target.value })}
+                  className="input-retro"
+                  placeholder="Creative Developer"
+                  required
+                />
+                <p className="text-sm text-neutral-500 mt-2">
+                  Judul utama di home page (contoh: Creative Developer)
+                </p>
+              </div>
+
+              <div>
+                <label className="block font-subheading text-lg mb-2">
+                  HERO SUBTITLE
+                </label>
+                <input
+                  type="text"
+                  value={formData.hero_subtitle}
+                  onChange={(e) => setFormData({ ...formData, hero_subtitle: e.target.value })}
+                  className="input-retro"
+                  placeholder="Full Stack Developer & UI/UX Designer"
+                />
+                <p className="text-sm text-neutral-500 mt-2">
+                  Sub judul di bawah hero title (optional)
+                </p>
+              </div>
+
+              <div>
+                <label className="block font-subheading text-lg mb-2">
+                  HERO TAGLINE *
+                </label>
+                <textarea
+                  value={formData.hero_tagline}
+                  onChange={(e) => setFormData({ ...formData, hero_tagline: e.target.value })}
+                  className="input-retro"
+                  rows={3}
+                  placeholder="Brief, impactful tagline for your hero section..."
+                  required
+                />
+                <p className="text-sm text-neutral-500 mt-2">
+                  Tagline pendek yang akan ditampilkan di home page
+                </p>
+              </div>
+            </div>
           </div>
 
-          {/* Social Links */}
+          {/* About Section Fields */}
           <div className="border-t-2 border-neutral-200 pt-6 mt-8">
-            <h3 className="text-2xl font-heading text-primary-900 mb-6">SOCIAL LINKS</h3>
-            
+            <h3 className="text-2xl font-heading text-primary-900 mb-6">ABOUT PAGE</h3>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block font-subheading text-lg mb-2">
+                  PROFESSIONAL TITLE
+                </label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="input-retro"
+                  placeholder="Full Stack Developer & UI Designer"
+                />
+                <p className="text-sm text-neutral-500 mt-2">
+                  Title profesional Anda (digunakan di About page)
+                </p>
+              </div>
+
+              <div>
+                <label className="block font-subheading text-lg mb-2">
+                  ABOUT ME BIO *
+                </label>
+                <textarea
+                  value={formData.bio}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  className="input-retro"
+                  rows={8}
+                  placeholder="Write your detailed bio here..."
+                  required
+                />
+                <p className="text-sm text-neutral-500 mt-2">
+                  Bio lengkap yang akan ditampilkan di About page
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div className="border-t-2 border-neutral-200 pt-6 mt-8">
+            <h3 className="text-2xl font-heading text-primary-900 mb-6">CONTACT</h3>
+
+            {/* Email */}
+            <div className="mb-6">
+              <label className="block font-subheading text-lg mb-2">
+                EMAIL *
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="input-retro"
+                placeholder="contact@example.com"
+                required
+              />
+            </div>
+
+            {/* Social Links */}
             <div className="space-y-4">
               <div>
                 <label className="block font-subheading text-base mb-2">
@@ -288,19 +363,6 @@ export default function AdminPersonalInfoPage() {
                   onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
                   className="input-retro"
                   placeholder="https://linkedin.com/in/username"
-                />
-              </div>
-
-              <div>
-                <label className="block font-subheading text-base mb-2">
-                  TWITTER URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.twitter_url}
-                  onChange={(e) => setFormData({ ...formData, twitter_url: e.target.value })}
-                  className="input-retro"
-                  placeholder="https://twitter.com/username"
                 />
               </div>
             </div>

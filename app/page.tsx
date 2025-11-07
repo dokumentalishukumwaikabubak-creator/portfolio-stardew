@@ -64,6 +64,7 @@ export default function HomePage() {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null)
   const [latestProjects, setLatestProjects] = useState<PortfolioItemWithCategory[]>([])
   const [loading, setLoading] = useState(true)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -84,6 +85,28 @@ export default function HomePage() {
     }
 
     fetchData()
+
+    // Check prefers-reduced-motion
+    if (typeof window !== 'undefined' && 'matchMedia' in window) {
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+      setPrefersReducedMotion(mq.matches)
+      const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
+      try {
+        mq.addEventListener('change', listener)
+      } catch {
+        // Safari fallback
+        // @ts-ignore
+        mq.addListener(listener)
+      }
+      return () => {
+        try {
+          mq.removeEventListener('change', listener)
+        } catch {
+          // @ts-ignore
+          mq.removeListener(listener)
+        }
+      }
+    }
   }, [])
 
   if (loading) {
@@ -97,27 +120,46 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="text-center py-16 mb-16">
-        <div className="card-vintage max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-heading mb-6 text-pixel-shadow">
-            {personalInfo?.name || t('home.title')}
-          </h1>
-          <p className="text-2xl font-subheading text-accent-500 mb-6">
-            {personalInfo?.title || 'Creative Developer'}
-          </p>
-          <p className="text-lg font-body text-neutral-700 mb-8 max-w-2xl mx-auto">
-            {personalInfo?.bio || t('home.description')}
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link href="/portfolio" className="btn-retro">
-              {t('home.viewPortfolio').toUpperCase()} <ArrowRight className="inline ml-2" size={20} />
-            </Link>
-            <Link 
-              href="/about"
-              className="px-6 py-3 font-subheading text-lg pixel-border bg-background-surface hover:bg-primary-100 transition-colors"
-            >
-              {t('home.aboutMe').toUpperCase()}
-            </Link>
+      <section className="py-16 mb-16">
+        <div className="card-vintage max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+            {/* Text column */}
+            <div className="text-center">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading mb-6 leading-tight text-pixel-shadow">
+                {personalInfo?.hero_title || t('home.title')}
+              </h1>
+              {personalInfo?.hero_subtitle && (
+                <p className="text-2xl font-subheading text-accent-500 mb-6">
+                  {personalInfo.hero_subtitle}
+                </p>
+              )}
+              <p className="text-lg font-body text-neutral-700 mb-8 max-w-2xl mx-auto md:mx-0">
+                {personalInfo?.hero_tagline || t('home.description')}
+              </p>
+
+              <div className="flex gap-4 justify-center">
+                <Link href="/portfolio" className="btn-retro">
+                  {t('home.viewPortfolio').toUpperCase()} <ArrowRight className="inline ml-2" size={20} />
+                </Link>
+                <Link 
+                  href="/about"
+                  className="px-6 py-3 font-subheading text-lg pixel-border bg-background-surface hover:bg-primary-100 transition-colors"
+                >
+                  {t('home.aboutMe').toUpperCase()}
+                </Link>
+              </div>
+            </div>
+
+            {/* Image column: show GIF on md+; hide if user prefers reduced motion */}
+            <div className="flex justify-center">
+              {!prefersReducedMotion && (
+                <img
+                  src="/ezgif-48df44af39b81a7f-unscreen.gif"
+                  alt="Karakter animasi"
+                  className="w-56 md:w-72 max-w-full rounded-lg shadow-lg"
+                />
+              )}
+            </div>
           </div>
         </div>
       </section>
