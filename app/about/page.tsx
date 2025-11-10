@@ -1,7 +1,7 @@
 'use client'
 
 // @ts-nocheck
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Mail, Github, Linkedin, Twitter, User, Loader2 } from 'lucide-react'
 import Image from 'next/image'
@@ -9,7 +9,7 @@ import type { PersonalInfo, Skill } from '@/types/database.types'
 import { useLanguage } from '@/components/LanguageContext'
 import { motion } from 'framer-motion'
 
-export default function AboutPage() {
+function AboutContent() {
   const { t } = useLanguage()
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null)
   const [skills, setSkills] = useState<Skill[]>([])
@@ -259,5 +259,17 @@ export default function AboutPage() {
         </motion.div>
       )}
     </motion.div>
+  )
+}
+
+export default function AboutPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-[70vh]">
+        <Loader2 className="animate-spin text-accent-500" size={48} />
+      </div>
+    }>
+      <AboutContent />
+    </Suspense>
   )
 }
