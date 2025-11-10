@@ -7,6 +7,7 @@ import { Mail, Github, Linkedin, Twitter, User, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import type { PersonalInfo, Skill } from '@/types/database.types'
 import { useLanguage } from '@/components/LanguageContext'
+import { motion } from 'framer-motion'
 
 export default function AboutPage() {
   const { t } = useLanguage()
@@ -68,13 +69,34 @@ export default function AboutPage() {
   }, {} as Record<string, Skill[]>)
 
   return (
-    <div>
-      <h1 className="page-header">{t('about.title')}</h1>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.h1 
+        className="page-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        {t('about.title')}
+      </motion.h1>
 
       {/* About Content */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         {/* Profile Image */}
-        <div className="md:col-span-1">
+        <motion.div 
+          className="md:col-span-1"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           <div className="card-vintage">
             {personalInfo?.profile_image_url ? (
               <div className="relative w-full aspect-square mb-4">
@@ -97,94 +119,145 @@ export default function AboutPage() {
               {personalInfo?.title || 'Your Title'}
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Bio */}
-        <div className="md:col-span-2">
-          <div className="card-vintage h-full">
+        <motion.div 
+          className="md:col-span-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <motion.div 
+            className="card-vintage h-full"
+            whileHover={{ y: -5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             <h3 className="font-heading text-2xl mb-4">{t('about.bio')}</h3>
             <p className="font-body text-lg text-neutral-700 leading-relaxed whitespace-pre-line">
               {personalInfo?.bio || 'Tell us about yourself...'}
             </p>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Skills Section */}
       {Object.keys(skillsByCategory).length > 0 && (
-        <div className="mb-16">
+        <motion.div 
+          className="mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
           <h2 className="text-3xl font-heading text-primary-900 mb-8">{t('about.skills')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {Object.entries(skillsByCategory).map(([category, categorySkills]) => (
-              <div key={category} className="card-vintage">
+            {Object.entries(skillsByCategory).map(([category, categorySkills], index) => (
+              <motion.div 
+                key={category}
+                className="card-vintage"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                whileHover={{ y: -5 }}
+              >
                 <h3 className="font-subheading text-xl mb-4 text-secondary-500">
                   {category.toUpperCase()}
                 </h3>
                 <div className="space-y-3">
-                  {categorySkills.map((skill) => (
-                    <div key={skill.id}>
+                  {categorySkills.map((skill, skillIndex) => (
+                    <motion.div 
+                      key={skill.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, delay: 0.7 + index * 0.1 + skillIndex * 0.05 }}
+                    >
                       <div className="flex justify-between items-center mb-1">
                         <span className="font-body text-neutral-700">{skill.name}</span>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Contact Section */}
       {personalInfo && (
-        <div className="card-vintage bg-gradient-to-r from-primary-100 to-secondary-100">
+        <motion.div 
+          className="card-vintage bg-gradient-to-r from-primary-100 to-secondary-100"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
           <h2 className="text-3xl font-heading text-center mb-6">{t('about.getInTouch')}</h2>
           <div className="flex flex-wrap gap-4 justify-center">
             {personalInfo.email && (
-              <a
+              <motion.a
                 href={`mailto:${personalInfo.email}`}
                 className="flex items-center gap-2 px-6 py-3 bg-background-surface pixel-border hover:shadow-card-hover transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.9 }}
               >
                 <Mail size={20} />
                 <span className="font-subheading">{t('about.email')}</span>
-              </a>
+              </motion.a>
             )}
             {personalInfo.github_url && (
-              <a
+              <motion.a
                 href={personalInfo.github_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 bg-background-surface pixel-border hover:shadow-card-hover transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 1.0 }}
               >
                 <Github size={20} />
                 <span className="font-subheading">{t('about.github')}</span>
-              </a>
+              </motion.a>
             )}
             {personalInfo.linkedin_url && (
-              <a
+              <motion.a
                 href={personalInfo.linkedin_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 bg-background-surface pixel-border hover:shadow-card-hover transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 1.1 }}
               >
                 <Linkedin size={20} />
                 <span className="font-subheading">{t('about.linkedin')}</span>
-              </a>
+              </motion.a>
             )}
             {personalInfo.twitter_url && (
-              <a
+              <motion.a
                 href={personalInfo.twitter_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 bg-background-surface pixel-border hover:shadow-card-hover transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 1.2 }}
               >
                 <Twitter size={20} />
                 <span className="font-subheading">{t('about.twitter')}</span>
-              </a>
+              </motion.a>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   )
 }

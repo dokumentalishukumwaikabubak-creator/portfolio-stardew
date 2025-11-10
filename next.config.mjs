@@ -4,11 +4,12 @@ const nextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: true,
-    domains: ['njopysnuxuymxxpohfxs.supabase.co'],
-  },
-  // Skip building admin routes for static export
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'njopysnuxuymxxpohfxs.supabase.co',
+      },
+    ],
   },
   // Security headers
   async headers() {

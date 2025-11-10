@@ -7,6 +7,7 @@ import PortfolioFilter from '@/components/portfolio/PortfolioFilter'
 import { useLanguage } from '@/components/LanguageContext'
 import { useEffect, useState } from 'react'
 import type { PortfolioItemWithCategory, Category } from '@/types/database.types'
+import { motion } from 'framer-motion'
 
 export default function PortfolioPage() {
   const { t } = useLanguage()
@@ -39,12 +40,29 @@ export default function PortfolioPage() {
   }
 
   return (
-    <div>
-      <h1 className="page-header">{t('portfolio.title')}</h1>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.h1 
+        className="page-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        {t('portfolio.title')}
+      </motion.h1>
 
       {/* Category Filter - Client Component */}
-      <PortfolioFilter categories={categories} projects={projects} />
-    </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <PortfolioFilter categories={categories} projects={projects} />
+      </motion.div>
+    </motion.div>
   )
 }
 

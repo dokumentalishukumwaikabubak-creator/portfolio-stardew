@@ -3,12 +3,13 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Star, Code, Palette } from 'lucide-react'
+import { ArrowRight, Star, Code, Palette, ChevronDown } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import PortfolioCard from '@/components/portfolio/PortfolioCard'
 import { useLanguage } from '@/components/LanguageContext'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import type { PortfolioItemWithCategory, PersonalInfo, Category } from '@/types/database.types'
+import { motion } from 'framer-motion'
 
 async function getPersonalInfo(): Promise<PersonalInfo | null> {
   const { data, error } = await supabase
@@ -65,6 +66,15 @@ export default function HomePage() {
   const [latestProjects, setLatestProjects] = useState<PortfolioItemWithCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  
+  // Refs for scroll navigation
+  const portfolioRef = useRef<HTMLElement>(null)
+  const ctaRef = useRef<HTMLElement>(null)
+
+  // Function to handle smooth scroll
+  const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -120,89 +130,188 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="py-16 mb-16">
+      <section className="min-h-[60vh] sm:min-h-[80vh] py-4 sm:py-6 md:py-8 mb-0 sm:mb-4 md:mb-8 relative">
         <div className="card-vintage max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-4 sm:gap-6 md:gap-8">
             {/* Text column */}
-            <div className="text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading mb-6 leading-tight text-pixel-shadow">
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <motion.h1 
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading mb-3 sm:mb-4 md:mb-6 leading-tight text-pixel-shadow"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
                 {personalInfo?.hero_title || t('home.title')}
-              </h1>
+              </motion.h1>
               {personalInfo?.hero_subtitle && (
-                <p className="text-2xl font-subheading text-accent-500 mb-6">
+                <motion.p 
+                  className="text-lg sm:text-xl md:text-2xl font-subheading text-accent-500 mb-3 md:mb-6"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
                   {personalInfo.hero_subtitle}
-                </p>
+                </motion.p>
               )}
-              <p className="text-lg font-body text-neutral-700 mb-8 max-w-2xl mx-auto md:mx-0">
+              <motion.p 
+                className="text-base md:text-lg font-body text-neutral-700 mb-6 md:mb-8 max-w-2xl mx-auto md:mx-0 px-4 md:px-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
                 {personalInfo?.hero_tagline || t('home.description')}
-              </p>
+              </motion.p>
 
-              <div className="flex gap-4 justify-center">
-                <Link href="/portfolio" className="btn-retro">
-                  {t('home.viewPortfolio').toUpperCase()} <ArrowRight className="inline ml-2" size={20} />
-                </Link>
+              <motion.div 
+                className="flex gap-2 sm:gap-4 justify-center items-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+              >
+                <button 
+                  onClick={() => scrollToSection(portfolioRef)} 
+                  className="btn-retro text-sm sm:text-base py-2 px-3 sm:px-4 sm:py-3 h-auto flex items-center"
+                >
+                  {t('home.viewPortfolio').toUpperCase()} 
+                  <ArrowRight className="inline ml-1 sm:ml-2" size={16} />
+                </button>
                 <Link 
                   href="/about"
-                  className="px-6 py-3 font-subheading text-lg pixel-border bg-background-surface hover:bg-primary-100 transition-colors"
+                  className="text-sm sm:text-base px-3 sm:px-4 py-2 sm:py-3 font-subheading pixel-border bg-background-surface hover:bg-primary-100 transition-colors h-auto flex items-center"
                 >
                   {t('home.aboutMe').toUpperCase()}
                 </Link>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Image column: show GIF on md+; hide if user prefers reduced motion */}
-            <div className="flex justify-center">
+            <motion.div 
+              className="flex justify-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
               {!prefersReducedMotion && (
                 <img
                   src="/ezgif-48df44af39b81a7f-unscreen.gif"
                   alt="Karakter animasi"
-                  className="w-56 md:w-72 max-w-full rounded-lg shadow-lg"
+                  className="hidden md:block w-72 max-w-full rounded-lg shadow-lg"
                 />
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
+        
+        {/* Scroll indicator - hidden on mobile */}
+        <motion.div 
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer hidden md:block"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1 }}
+          onClick={() => scrollToSection(portfolioRef)}
+        >
+          <ChevronDown 
+            size={32} 
+            className="text-accent-500 animate-bounce" 
+          />
+        </motion.div>
       </section>
 
       {/* Latest Projects */}
       {latestProjects.length > 0 && (
-        <section>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-heading text-primary-900 flex items-center gap-3">
+        <section ref={portfolioRef} className="scroll-mt-0 sm:scroll-mt-4 md:scroll-mt-8 min-h-[60vh] sm:min-h-[80vh] pt-0 pb-4 sm:py-6 md:py-8 flex flex-col justify-center">
+          <motion.div 
+            className="text-center mb-2 sm:mb-6 md:mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-2xl sm:text-3xl font-heading text-primary-900 flex items-center gap-2 sm:gap-3 justify-center mb-3 md:mb-4">
               <Star className="text-accent-500" /> {t('portfolio.title')}
             </h2>
-            <Link 
-              href="/portfolio"
-              className="font-subheading text-lg text-accent-500 hover:text-accent-700 transition-colors flex items-center gap-2"
-            >
-              {t('portfolio.viewDetails')} <ArrowRight size={18} />
-            </Link>
-          </div>
+          </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {latestProjects.map((project) => (
-              <PortfolioCard key={project.id} item={project} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-6 sm:mb-8 md:mb-12">
+            {latestProjects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <PortfolioCard item={project} />
+              </motion.div>
             ))}
           </div>
+
+          {/* Navigation to next section - hidden on mobile */}
+          <motion.div 
+            className="text-center hidden md:block"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <button
+              onClick={() => scrollToSection(ctaRef)}
+              className="btn-retro flex items-center gap-2 mx-auto"
+            >
+              GET IN TOUCH <ChevronDown size={20} />
+            </button>
+          </motion.div>
         </section>
       )}
 
       {/* CTA Section */}
-      <section className="mt-16 text-center">
-        <div className="card-vintage bg-gradient-to-r from-primary-100 to-secondary-100 max-w-2xl mx-auto">
-          <h2 className="text-3xl font-heading mb-4">{t('home.subtitle')}</h2>
-          <p className="font-body text-lg text-neutral-700 mb-6">
+      <section ref={ctaRef} className="scroll-mt-4 sm:scroll-mt-6 md:scroll-mt-8 min-h-[60vh] py-4 sm:py-6 md:py-8 flex items-center">
+        <motion.div 
+          className="card-vintage bg-gradient-to-r from-primary-100 to-secondary-100 max-w-2xl mx-auto w-full px-4 sm:px-6 md:px-8"
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2 
+            className="text-2xl sm:text-3xl font-heading mb-3 md:mb-4"
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            {t('home.subtitle')}
+          </motion.h2>
+          <motion.p 
+            className="font-body text-base sm:text-lg text-neutral-700 mb-4 md:mb-6 px-4 md:px-0"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
             {language === 'id' ? 'Tertarik bekerja sama? Jangan ragu untuk menghubungi saya!' : 'Interested in collaborating? Don\'t hesitate to reach out!'}
-          </p>
+          </motion.p>
           {personalInfo?.email && (
-            <a 
-              href={`mailto:${personalInfo.email}`}
-              className="btn-retro inline-block"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.6 }}
             >
-              {language === 'id' ? 'HUBUNGI SAYA' : 'CONTACT ME'}
-            </a>
+              <a 
+                href={`mailto:${personalInfo.email}`}
+                className="btn-retro inline-block"
+              >
+                {language === 'id' ? 'HUBUNGI SAYA' : 'CONTACT ME'}
+              </a>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
       </section>
     </div>
   )
