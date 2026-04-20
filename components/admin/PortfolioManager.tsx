@@ -2,7 +2,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { Plus, Edit, Trash2, Loader2, ExternalLink } from 'lucide-react'
@@ -23,25 +22,15 @@ interface Category {
   name: string
 }
 
-export default function AdminPortfolioPage() {
-  const router = useRouter()
+export default function PortfolioManager() {
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState<PortfolioItem[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [deleting, setDeleting] = useState<number | null>(null)
 
   useEffect(() => {
-    checkAuth()
     fetchData()
   }, [])
-
-  async function checkAuth() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
-      router.push('/admin/login')
-      return
-    }
-  }
 
   async function fetchData() {
     setLoading(true)
@@ -105,53 +94,53 @@ export default function AdminPortfolioPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[70vh]">
+      <div className="flex justify-center items-center py-12">
         <Loader2 className="animate-spin text-accent-500" size={48} />
       </div>
     )
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-heading text-primary-900">PORTFOLIO MANAGEMENT</h1>
+    <div className="mt-8">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-stone-800">Portfolio Management</h2>
         <Link
           href="/admin/portfolio/new"
-          className="flex items-center gap-2 btn-retro"
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
         >
-          <Plus size={20} /> ADD NEW
+          <Plus size={20} /> Add New Item
         </Link>
       </div>
 
       {items.length === 0 ? (
-        <div className="card-vintage text-center py-16">
-          <p className="font-subheading text-xl text-neutral-500 mb-6">
+        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <p className="text-stone-600 mb-4">
             Belum ada portfolio items
           </p>
-          <Link href="/admin/portfolio/new" className="btn-retro inline-flex items-center gap-2">
-            <Plus size={20} /> TAMBAH PORTFOLIO PERTAMA
+          <Link href="/admin/portfolio/new" className="inline-flex items-center gap-2 text-blue-600 hover:underline">
+            <Plus size={20} /> Tambah Portfolio Pertama
           </Link>
         </div>
       ) : (
-        <div className="card-vintage">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
-                <tr className="border-b-2 border-neutral-300">
-                  <th className="text-left p-4 font-subheading text-lg">Image</th>
-                  <th className="text-left p-4 font-subheading text-lg">Title</th>
-                  <th className="text-left p-4 font-subheading text-lg">Category</th>
-                  <th className="text-left p-4 font-subheading text-lg">Featured</th>
-                  <th className="text-left p-4 font-subheading text-lg">Date</th>
-                  <th className="text-right p-4 font-subheading text-lg">Actions</th>
+              <thead className="bg-stone-50">
+                <tr>
+                  <th className="text-left p-4 font-semibold text-stone-600">Image</th>
+                  <th className="text-left p-4 font-semibold text-stone-600">Title</th>
+                  <th className="text-left p-4 font-semibold text-stone-600">Category</th>
+                  <th className="text-left p-4 font-semibold text-stone-600">Featured</th>
+                  <th className="text-left p-4 font-semibold text-stone-600">Date</th>
+                  <th className="text-right p-4 font-semibold text-stone-600">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-stone-200">
                 {items.map((item) => (
-                  <tr key={item.id} className="border-b border-neutral-200 hover:bg-primary-50">
+                  <tr key={item.id} className="hover:bg-stone-50">
                     <td className="p-4">
                       {item.image_url ? (
-                        <div className="relative w-16 h-16">
+                        <div className="relative w-16 h-16 rounded overflow-hidden">
                           <Image
                             src={item.image_url}
                             alt={item.title}
@@ -160,43 +149,41 @@ export default function AdminPortfolioPage() {
                           />
                         </div>
                       ) : (
-                        <div className="w-16 h-16 bg-neutral-200 flex items-center justify-center">
-                          <span className="text-neutral-400 text-xs">No Image</span>
+                        <div className="w-16 h-16 bg-stone-200 flex items-center justify-center rounded text-stone-400 text-xs">
+                          No Image
                         </div>
                       )}
                     </td>
                     <td className="p-4">
-                      <div className="font-subheading text-base text-primary-900">{item.title}</div>
+                      <div className="font-medium text-stone-800">{item.title}</div>
                       {item.description && (
-                        <div className="text-sm text-neutral-600 line-clamp-1">{item.description}</div>
+                        <div className="text-sm text-stone-500 line-clamp-1">{item.description}</div>
                       )}
                     </td>
                     <td className="p-4">
-                      <span className="inline-block px-3 py-1 bg-secondary-100 text-secondary-700 text-sm font-body">
+                      <span className="inline-block px-2 py-1 bg-stone-100 text-stone-600 text-xs rounded-full">
                         {getCategoryName(item.category_id)}
                       </span>
                     </td>
                     <td className="p-4">
-                      {/* Toggle featured on/off */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         {item.is_featured ? (
-                          <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 text-sm font-body">
+                          <span className="inline-block px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">
                             Featured
                           </span>
                         ) : (
-                          <span className="text-neutral-400 text-sm">-</span>
+                          <span className="text-stone-400 text-sm">-</span>
                         )}
-
                         <button
                           onClick={() => toggleFeatured(item.id, !!item.is_featured)}
                           disabled={updatingFeatured === item.id}
-                          className="px-3 py-1 bg-background-surface text-sm hover:bg-primary-100 transition-colors disabled:opacity-50"
+                          className="text-xs text-blue-600 hover:underline disabled:opacity-50"
                         >
                           {updatingFeatured === item.id ? '...' : (item.is_featured ? 'Unset' : 'Set')}
                         </button>
                       </div>
                     </td>
-                    <td className="p-4 text-sm text-neutral-600">
+                    <td className="p-4 text-sm text-stone-600">
                       {new Date(item.created_at).toLocaleDateString('id-ID')}
                     </td>
                     <td className="p-4">
@@ -204,14 +191,14 @@ export default function AdminPortfolioPage() {
                         <Link
                           href={`/portfolio/${item.id}`}
                           target="_blank"
-                          className="p-2 bg-neutral-500 text-white hover:bg-neutral-700 transition-colors"
+                          className="p-2 text-stone-500 hover:text-stone-700 hover:bg-stone-100 rounded transition-colors"
                           title="View"
                         >
                           <ExternalLink size={18} />
                         </Link>
                         <Link
                           href={`/admin/portfolio/${item.id}`}
-                          className="p-2 bg-accent-500 text-white hover:bg-accent-700 transition-colors"
+                          className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
                           title="Edit"
                         >
                           <Edit size={18} />
@@ -219,7 +206,7 @@ export default function AdminPortfolioPage() {
                         <button
                           onClick={() => handleDelete(item.id)}
                           disabled={deleting === item.id}
-                          className="p-2 bg-semantic-error text-white hover:bg-semantic-error/80 transition-colors disabled:opacity-50"
+                          className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
                           title="Delete"
                         >
                           {deleting === item.id ? (
