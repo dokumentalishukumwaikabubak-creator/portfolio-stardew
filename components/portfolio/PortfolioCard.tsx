@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+// Using native img for Google Drive URL compatibility
+// import Image from 'next/image'
 import { ExternalLink, Github, Briefcase } from 'lucide-react'
 import { useLanguage } from '../LanguageContext'
 import type { PortfolioItemWithCategory } from '@/types/database.types'
@@ -27,11 +28,10 @@ export default function PortfolioCard({ item }: PortfolioCardProps) {
         transition={{ duration: 0.2 }}
       >
         {item.image_url ? (
-          <Image
+          <img
             src={item.image_url}
             alt={item.title}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-slow"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-slow"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-neutral-300">

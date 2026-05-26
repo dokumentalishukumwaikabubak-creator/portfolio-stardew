@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { supabase, uploadImage } from '@/lib/supabase'
 import { ArrowLeft, Upload, Loader2, X } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
+// Using native img for Google Drive URL compatibility
+// import Image from 'next/image'
 
 interface Category {
   id: number
@@ -223,12 +224,12 @@ export default function NewPortfolioPage() {
           </label>
           {imagePreview ? (
             <div className="relative">
-              <div className="relative w-full h-64 mb-2">
-                <Image
+              <div className="relative w-full h-64 mb-2 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={imagePreview}
                   alt="Preview"
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <button

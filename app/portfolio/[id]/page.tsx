@@ -5,7 +5,8 @@
 // Static params will be generated at build time by the parent layout
 
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
+// Using native img for Google Drive URL compatibility
+// import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { ArrowLeft, ExternalLink, Github, Calendar } from 'lucide-react'
@@ -87,12 +88,12 @@ export default function PortfolioDetailPage({ params }: { params: Promise<{ id: 
       {/* Project Hero */}
       <div className="card-vintage mb-8">
         {project.image_url && (
-          <div className="relative w-full h-96 mb-6">
-            <Image
+          <div className="relative w-full h-96 mb-6 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={project.image_url}
               alt={project.title}
-              fill
-              className="object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
         )}

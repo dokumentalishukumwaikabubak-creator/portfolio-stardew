@@ -9,7 +9,8 @@ type PersonalInfoRow = Database['public']['Tables']['personal_info']['Row']
 type PersonalInfoInsert = Database['public']['Tables']['personal_info']['Insert']
 type PersonalInfoUpdate = Database['public']['Tables']['personal_info']['Update']
 import { Save, Loader2, Upload, X } from 'lucide-react'
-import Image from 'next/image'
+// Using native img for Google Drive URL compatibility
+// import Image from 'next/image'
 
 export default function AdminPersonalInfoPage() {
   const router = useRouter()
@@ -146,6 +147,11 @@ export default function AdminPersonalInfoPage() {
         if (error) throw error
       }
 
+      // Reset file state and update image URL immediately
+      setImageFile(null)
+      setImagePreview(null)
+      setCurrentImageUrl(profileImageUrl)
+
       alert('Personal info berhasil disimpan!')
       await fetchPersonalInfo()
     } catch (error: any) {
@@ -175,12 +181,16 @@ export default function AdminPersonalInfoPage() {
           </label>
           {(imagePreview || currentImageUrl) ? (
             <div className="relative">
-              <div className="relative w-48 h-48 mx-auto mb-4">
-                <Image
+              <div className="relative w-48 h-48 mx-auto mb-4 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={imagePreview || currentImageUrl || ''}
                   alt="Profile"
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('Image failed to load:', imagePreview || currentImageUrl)
+                    ;(e.target as HTMLImageElement).style.display = 'none'
+                  }}
                 />
               </div>
               <button

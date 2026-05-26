@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { Plus, Edit, Trash2, Loader2, ExternalLink } from 'lucide-react'
-import Image from 'next/image'
+// Using native img for Google Drive URL compatibility
+// import Image from 'next/image'
 
 interface PortfolioItem {
   id: number
@@ -141,11 +142,11 @@ export default function PortfolioManager() {
                     <td className="p-4">
                       {item.image_url ? (
                         <div className="relative w-16 h-16 rounded overflow-hidden">
-                          <Image
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
                             src={item.image_url}
                             alt={item.title}
-                            fill
-                            className="object-cover"
+                            className="w-full h-full object-cover"
                           />
                         </div>
                       ) : (

@@ -4,7 +4,8 @@
 import { useState, useEffect, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Mail, Github, Linkedin, Twitter, User, Loader2 } from 'lucide-react'
-import Image from 'next/image'
+// Using native img for Google Drive URL compatibility
+// import Image from 'next/image'
 import type { PersonalInfo, Skill } from '@/types/database.types'
 import { useLanguage } from '@/components/LanguageContext'
 import { motion } from 'framer-motion'
@@ -99,12 +100,12 @@ function AboutContent() {
         >
           <div className="card-vintage">
             {personalInfo?.profile_image_url ? (
-              <div className="relative w-full aspect-square mb-4">
-                <Image
+              <div className="relative w-full aspect-square mb-4 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={personalInfo.profile_image_url}
                   alt={personalInfo.name || 'Profile'}
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
             ) : (
